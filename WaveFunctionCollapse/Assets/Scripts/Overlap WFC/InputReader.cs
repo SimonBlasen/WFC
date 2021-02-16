@@ -16,6 +16,10 @@ namespace OverlapWFC
         [SerializeField]
         private int patternSize = 2;
         [SerializeField]
+        private bool mirror = false;
+        [SerializeField]
+        private bool rotate = false;
+        [SerializeField]
         private WrapStrategy wrapStrategy = WrapStrategy.NO_PADDING;
 
         [Space]
@@ -125,7 +129,7 @@ namespace OverlapWFC
                 }
             }
 
-            patternManager = PatternManager.CreateFromInput(values, patternSize, wrapStrategy, true, true);
+            patternManager = PatternManager.CreateFromInput(values, patternSize, wrapStrategy, rotate, mirror);
         }
 
 
