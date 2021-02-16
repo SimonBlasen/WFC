@@ -9,6 +9,7 @@ namespace OverlapWFC
         private int index = -1;
         private int size = -1;
         private int frequency = 1;
+        private float relativeFrequency = 1f;
 
         private int[,] pattern = null;
 
@@ -52,6 +53,39 @@ namespace OverlapWFC
             {
                 frequency = value;
             }
+        }
+
+        public float RelativeFrequency
+        {
+            get
+            {
+                return relativeFrequency;
+            }
+            set
+            {
+                relativeFrequency = value;
+            }
+        }
+
+        public int NeighboursAmount
+        {
+            get
+            {
+                return neighbours.Count;
+            }
+        }
+
+        public bool HasNeighbour(int index, Vector2Int offset)
+        {
+            for (int i = 0; i < neighbours.Count; i++)
+            {
+                if (neighbours[i].NeighbourIndex == index && neighbours[i].Offset == offset)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         public void AddNeighbour(int index, Vector2Int offset)

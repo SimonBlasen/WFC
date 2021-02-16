@@ -28,7 +28,18 @@ namespace OverlapWFC
         private int[,] values = null;
         private GameObject[,] meshes = null;
 
+        private Dictionary<int, GameObject> dictMesh = new Dictionary<int, GameObject>();
+
         private PatternManager patternManager = null;
+
+        public GameObject GetMesh(int index)
+        {
+            if (dictMesh.ContainsKey(index))
+            {
+                return dictMesh[index];
+            }
+            return null;
+        }
 
 
         private void Update()
@@ -53,6 +64,8 @@ namespace OverlapWFC
         {
             values = new int[inputSize, inputSize];
             meshes = new GameObject[inputSize, inputSize];
+
+            dictMesh = new Dictionary<int, GameObject>();
 
 
             Dictionary<string, int> nameIndices = new Dictionary<string, int>();
@@ -100,6 +113,10 @@ namespace OverlapWFC
                     if (foundTrans != null)
                     {
                         meshes[x, y] = foundTrans.gameObject;
+                        if (dictMesh.ContainsKey(index) == false)
+                        {
+                            dictMesh.Add(index, foundTrans.gameObject);
+                        }
                     }
                     else
                     {
@@ -109,6 +126,15 @@ namespace OverlapWFC
             }
 
             patternManager = PatternManager.CreateFromInput(values, patternSize, wrapStrategy, true, true);
+        }
+
+
+        public PatternManager PatternManager
+        {
+            get
+            {
+                return patternManager;
+            }
         }
     }
 

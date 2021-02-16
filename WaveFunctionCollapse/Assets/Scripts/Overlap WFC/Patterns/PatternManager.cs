@@ -19,6 +19,32 @@ namespace OverlapWFC
             this.patternSize = patternSize;
         }
 
+        public int PatternSize
+        {
+            get
+            {
+                return patternSize;
+            }
+        }
+
+        public int PatternsAmount
+        {
+            get
+            {
+                return patterns.Count;
+            }
+        }
+
+        public Pattern GetPattern(int index)
+        {
+            if (index >= 0 && index < PatternsAmount)
+            {
+                return patterns[index];
+            }
+
+            return null;
+        }
+
         public static PatternManager CreateFromInput(int[,] values, int patternSize, WrapStrategy wrapStrategy, bool rotate = false, bool mirror = false)
         {
             PatternManager manager = new PatternManager(patternSize);
@@ -119,7 +145,44 @@ namespace OverlapWFC
                         }
                     }
                 }
+
+                Debug.Log("Pattern [" + i.ToString() + "] Neighbours: " + manager.patterns[i].NeighboursAmount.ToString());
             }
+
+            List<int> indices = new List<int>();
+            for (int i = 0; i < manager.patterns.Count; i++)
+            {
+                if (manager.patterns[i].Index != i)
+                {
+                    Debug.LogError("Faulty index in pattern manager");
+                }
+                indices.Add(i);
+            }
+            /*for (int i = 0; i < manager.patterns.Count; i++)
+            {
+                if (indices.Contains(manager.patterns[i].Index))
+                {
+                    indices.Remove(manager.patterns[i].Index);
+                }
+                else
+                {
+                    Debug.LogError("Faulty index in pattern manager");
+                }
+            }*/
+
+
+            // Relative frequencies
+            int totalSum = 0;
+            for (int i = 0; i < manager.patterns.Count; i++)
+            {
+                totalSum += manager.patterns[i].Frequency;
+            }
+
+            for (int i = 0; i < manager.patterns.Count; i++)
+            {
+                manager.patterns[i].RelativeFrequency = manager.patterns[i].Frequency / ((float)totalSum);
+            }
+
 
             return manager;
         }

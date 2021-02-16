@@ -7,7 +7,7 @@ namespace OverlapWFC
     public class PatternNeighbour
     {
         private int neighbourIndex = -1;
-        public Vector2Int offset = Vector2Int.zero;
+        private Vector2Int offset = Vector2Int.zero;
 
         public PatternNeighbour(int patternIndex, Vector2Int offset)
         {
