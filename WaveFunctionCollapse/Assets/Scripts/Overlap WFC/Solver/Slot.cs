@@ -42,11 +42,31 @@ namespace OverlapWFC
                 bitDomain[arr] &= ~(0x1UL << bit);
             }
 
+            bitNeighbours_0_0 = new ulong[bitDomain.Length];
+            bitNeighbours_0_1 = new ulong[bitDomain.Length];
+            bitNeighbours_0_2 = new ulong[bitDomain.Length];
+            bitNeighbours_1_0 = new ulong[bitDomain.Length];
+            bitNeighbours_1_1 = new ulong[bitDomain.Length];
+            bitNeighbours_1_2 = new ulong[bitDomain.Length];
+            bitNeighbours_2_0 = new ulong[bitDomain.Length];
+            bitNeighbours_2_1 = new ulong[bitDomain.Length];
+            bitNeighbours_2_2 = new ulong[bitDomain.Length];
+
+            domainIndicer = new int[DomainSize];
+            /*for (int i = 0; i < DomainSize; i++)
+            {
+                domainIndicer[i] = i;
+            }*/
+
             /*for (int i = 0; i < bitDomain.Length; i++)
             {
                 string strRep = System.Convert.ToString((long)bitDomain[i], 2);
                 int sdfew = 0;
             }*/
+
+            recalculateDomainIndicer();
+
+            recalculatePossibleNeighbours();
 
             calcEntropy();
         }
@@ -67,9 +87,13 @@ namespace OverlapWFC
             }
         }*/
 
+        private int[] domainIndicer = new int[0];
+
         public int GetDomainAt(int i)
         {
-            int index = 0;
+            return domainIndicer[i];
+
+            /*int index = 0;
             int counter = 0;
 
             while (counter <= i)
@@ -85,7 +109,7 @@ namespace OverlapWFC
                 index++;
             }
 
-            return index - 1;
+            return index - 1;*/
 
             /*
             if (i >= 0 && i < DomainSize)
@@ -109,6 +133,10 @@ namespace OverlapWFC
             {
                 DomainSize += sparseBitcount(bitDomain[i]);
             }
+
+            recalculateDomainIndicer();
+
+            recalculatePossibleNeighbours();
 
             calcEntropy();
         }
@@ -187,6 +215,10 @@ namespace OverlapWFC
 
             DomainSize = 1;
 
+            recalculateDomainIndicer();
+
+            recalculatePossibleNeighbours();
+
             calcEntropy();
         }
 
@@ -216,6 +248,95 @@ namespace OverlapWFC
             float entropy = log2TotalWeight - (partialLogSum / totalWeightSum);
 
             Entropy = entropy;
+        }
+
+        public ulong[] PossibleNeighboursAt(Vector2Int offset)
+        {
+            if (offset.x == -1 && offset.y == -1)
+                return bitNeighbours_0_0;
+            else if (offset.x == -1 && offset.y == 0)
+                return bitNeighbours_0_1;
+            else if (offset.x == -1 && offset.y == 1)
+                return bitNeighbours_0_2;
+            else if (offset.x == 0 && offset.y == -1)
+                return bitNeighbours_1_0;
+            else if (offset.x == 0 && offset.y == 0)
+                return bitNeighbours_1_1;
+            else if (offset.x == 0 && offset.y == 1)
+                return bitNeighbours_1_2;
+            else if (offset.x == 1 && offset.y == -1)
+                return bitNeighbours_2_0;
+            else if (offset.x == 1 && offset.y == 0)
+                return bitNeighbours_2_1;
+            else if (offset.x == 1 && offset.y == 1)
+                return bitNeighbours_2_2;
+            else
+                return null;
+        }
+
+        private void recalculateDomainIndicer()
+        {
+            int counter = 0;
+
+            for (int index = 0; index < bitDomain.Length * 64; index++)
+            {
+                int arr = index / 64;
+                int bit = index - arr * 64;
+
+                if (((bitDomain[arr] >> bit) & 0x1UL) == 0x1UL)
+                {
+                    domainIndicer[counter] = index;
+                    counter++;
+                }
+            }
+        }
+
+        private void recalculatePossibleNeighbours()
+        {
+            for (int offsetX = -1; offsetX < 2; offsetX++)
+            {
+                for (int offsetY = -1; offsetY < 2; offsetY++)
+                {
+                    ulong[] possibleNeighbours = new ulong[bitDomain.Length];
+                    for (int arr = 0; arr < possibleNeighbours.Length; arr++)
+                    {
+                        possibleNeighbours[arr] = 0x0UL;
+                    }
+
+                    for (int i = 0; i < DomainSize; i++)
+                    {
+                        Pattern patternHere = patternManager.GetPattern(GetDomainAt(i));
+                        ulong[] neighbours = patternHere.NeighboursAt(new Vector2Int(offsetX, offsetY));
+
+                        for (int arr = 0; arr < neighbours.Length; arr++)
+                        {
+                            possibleNeighbours[arr] |= neighbours[arr];
+                        }
+                    }
+
+                    for (int arr = 0; arr < possibleNeighbours.Length; arr++)
+                    {
+                        if (offsetX == -1 && offsetY == -1)
+                            bitNeighbours_0_0[arr] = possibleNeighbours[arr];
+                        else if (offsetX == -1 && offsetY == 0)
+                            bitNeighbours_0_1[arr] = possibleNeighbours[arr];
+                        else if (offsetX == -1 && offsetY == 1)
+                            bitNeighbours_0_2[arr] = possibleNeighbours[arr];
+                        else if (offsetX == 0 && offsetY == -1)
+                            bitNeighbours_1_0[arr] = possibleNeighbours[arr];
+                        else if (offsetX == 0 && offsetY == 0)
+                            bitNeighbours_1_1[arr] = possibleNeighbours[arr];
+                        else if (offsetX == 0 && offsetY == 1)
+                            bitNeighbours_1_2[arr] = possibleNeighbours[arr];
+                        else if (offsetX == 1 && offsetY == -1)
+                            bitNeighbours_2_0[arr] = possibleNeighbours[arr];
+                        else if (offsetX == 1 && offsetY == 0)
+                            bitNeighbours_2_1[arr] = possibleNeighbours[arr];
+                        else if (offsetX == 1 && offsetY == 1)
+                            bitNeighbours_2_2[arr] = possibleNeighbours[arr];
+                    }
+                }
+            }
         }
     }
 }

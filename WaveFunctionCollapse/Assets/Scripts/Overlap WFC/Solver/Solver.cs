@@ -76,15 +76,15 @@ namespace OverlapWFC
                         {
                             ulong[] domainsAtOffset = slots[ofPosX, ofPosY].Domain;
                             ulong[] domainsAtOffsetOld = new ulong[domainsAtOffset.Length];
-                            ulong[] possibleNeighbours = new ulong[domainsAtOffset.Length];
+                            ulong[] possibleNeighbours = slots[x, y].PossibleNeighboursAt(new Vector2Int(offsetX, offsetY));// new ulong[domainsAtOffset.Length];
                             for (int arr = 0; arr < possibleNeighbours.Length; arr++)
                             {
-                                possibleNeighbours[arr] = 0x0UL;
+                                //possibleNeighbours[arr] = 0x0UL;
                                 domainsAtOffsetOld[arr] = domainsAtOffset[arr];
                             }
                             //domainsAtOffset.AddRange(slots[ofPosX, ofPosY].Domain);
 
-                            for (int i = 0; i < slots[x, y].DomainSize; i++)
+                            /*for (int i = 0; i < slots[x, y].DomainSize; i++)
                             {
                                 Pattern patternHere = patternManager.GetPattern(slots[x, y].GetDomainAt(i));
 
@@ -95,15 +95,7 @@ namespace OverlapWFC
                                     possibleNeighbours[arr] |= neighbours[arr];
                                     //domainsAtOffset[arr] &= neighbours[arr];
                                 }
-
-                                /*for (int j = 0; j < domainsAtOffset.Count; j++)
-                                {
-                                    if (patternHere.HasNeighbour(domainsAtOffset[j], new Vector2Int(offsetX, offsetY)))
-                                    {
-                                        possiblePatterns.Add(domainsAtOffset[j]);
-                                    }
-                                }*/
-                            }
+                            }*/
 
                             bool changed = false;
                             for (int arr = 0; arr < possibleNeighbours.Length; arr++)
