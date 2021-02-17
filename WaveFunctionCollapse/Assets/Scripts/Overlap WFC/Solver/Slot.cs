@@ -6,69 +6,160 @@ namespace OverlapWFC
 {
     public class Slot
     {
-        private List<int> domains = new List<int>();
+        //private List<int> domains = new List<int>();
+        private ulong[] bitDomain = new ulong[0];
+
+        private ulong[] bitNeighbours_1_1 = new ulong[0];
+        private ulong[] bitNeighbours_0_0 = new ulong[0];
+        private ulong[] bitNeighbours_0_1 = new ulong[0];
+        private ulong[] bitNeighbours_0_2 = new ulong[0];
+        private ulong[] bitNeighbours_1_2 = new ulong[0];
+        private ulong[] bitNeighbours_2_2 = new ulong[0];
+        private ulong[] bitNeighbours_2_1 = new ulong[0];
+        private ulong[] bitNeighbours_2_0 = new ulong[0];
+        private ulong[] bitNeighbours_1_0 = new ulong[0];
+
         private PatternManager patternManager;
 
         public Slot(PatternManager patternManager)
         {
             this.patternManager = patternManager;
-            for (int i = 0; i < patternManager.PatternsAmount; i++)
+
+            bitDomain = new ulong[((patternManager.PatternsAmount - 1) / 64) + 1];
+
+            DomainSize = patternManager.PatternsAmount;
+
+            for (int i = 0; i < bitDomain.Length; i++)
             {
-                domains.Add(i);
+                bitDomain[i] = 0xFFFFFFFFFFFFFFFF;
             }
+
+            for (int i = patternManager.PatternsAmount; i < bitDomain.Length * 64; i++)
+            {
+                int arr = i / 64;
+                int bit = i - arr * 64;
+
+                bitDomain[arr] &= ~(0x1UL << bit);
+            }
+
+            /*for (int i = 0; i < bitDomain.Length; i++)
+            {
+                string strRep = System.Convert.ToString((long)bitDomain[i], 2);
+                int sdfew = 0;
+            }*/
 
             calcEntropy();
         }
 
-        public int[] Domain
+        public ulong[] Domain
+        {
+            get
+            {
+                return bitDomain;
+            }
+        }
+
+        /*public int[] Domain
         {
             get
             {
                 return domains.ToArray();
             }
-        }
+        }*/
 
         public int GetDomainAt(int i)
         {
-            if (i >= 0 && i < DomainSize)
+            int index = 0;
+            int counter = 0;
+
+            while (counter <= i)
             {
-                return domains[i];
+                int arr = index / 64;
+                int bit = index - arr * 64;
+
+                if (((bitDomain[arr] >> index) & 0x1UL) == 0x1UL)
+                {
+                    counter++;
+                }
+
+                index++;
             }
 
-            return -1;
+            return index - 1;
+
+            /*
+            if (i >= 0 && i < DomainSize)
+            {
+                return 0;// return domains[i];
+            }
+
+            return -1;*/
         }
 
         public int DomainSize
         {
-            get
-            {
-                return domains.Count;
-            }
-        }
+            get; protected set;
+        } = 0;
 
-        public void RemoveDomain(int index)
+        public void RecalculateDomainSize()
         {
-            domains.Remove(index);
+            DomainSize = 0;
+
+            for (int i = 0; i < bitDomain.Length; i++)
+            {
+                DomainSize += sparseBitcount(bitDomain[i]);
+            }
 
             calcEntropy();
         }
 
+        private static int sparseBitcount(ulong n)
+        {
+            int count = 0;
+            while (n != 0)
+            {
+                count++;
+                n &= (n - 1);
+            }
+            return count;
+        }
+
+        /*public void RemoveDomain(int index)
+        {
+            DomainSize--;
+
+            int arr = index / 64;
+            int bit = index - arr * 64;
+
+            bitDomain[arr] = (0x1UL << bit);
+
+            //domains.Remove(index);
+
+            calcEntropy();
+        }*/
+
 
         public void Collapse()
         {
-            float totalWeightSum = 0f;
-            for (int i = 0; i < domains.Count; i++)
+            List<int> patternsLeft = new List<int>();
+            for (int i = 0; i < DomainSize; i++)
             {
-                totalWeightSum += patternManager.GetPattern(domains[i]).RelativeFrequency;
+                patternsLeft.Add(GetDomainAt(i));
+            }
+            
+            float totalWeightSum = 0f;
+            for (int i = 0; i < patternsLeft.Count; i++)
+            {
+                totalWeightSum += patternManager.GetPattern(patternsLeft[i]).RelativeFrequency;
             }
 
             float randValue = Random.Range(0f, totalWeightSum);
 
             int collapseIndex = -1;
             totalWeightSum = 0f;
-            for (int i = 0; i < domains.Count; i++)
+            for (int i = 0; i < patternsLeft.Count; i++)
             {
-                totalWeightSum += patternManager.GetPattern(domains[i]).RelativeFrequency;
+                totalWeightSum += patternManager.GetPattern(patternsLeft[i]).RelativeFrequency;
 
                 if (randValue <= totalWeightSum)
                 {
@@ -79,13 +170,22 @@ namespace OverlapWFC
 
             if (collapseIndex == -1)
             {
-                collapseIndex = domains.Count - 1;
+                collapseIndex = patternsLeft.Count - 1;
             }
 
-            int remainingIndex = domains[collapseIndex];
+            int remainingIndex = patternsLeft[collapseIndex];
 
-            domains = new List<int>();
-            domains.Add(remainingIndex);
+            int arr = remainingIndex / 64;
+            int bit = remainingIndex - arr * 64;
+
+            for (int i = 0; i < bitDomain.Length; i++)
+            {
+                bitDomain[i] = 0x0UL;
+            }
+
+            bitDomain[arr] = (0x1UL << bit);
+
+            DomainSize = 1;
 
             calcEntropy();
         }
@@ -97,6 +197,12 @@ namespace OverlapWFC
 
         private void calcEntropy()
         {
+            List<int> domains = new List<int>();
+            for (int i = 0; i < DomainSize; i++)
+            {
+                domains.Add(GetDomainAt(i));
+            }
+
             float totalWeightSum = 0f;
             float partialLogSum = 0f;
             for (int i = 0; i < domains.Count; i++)

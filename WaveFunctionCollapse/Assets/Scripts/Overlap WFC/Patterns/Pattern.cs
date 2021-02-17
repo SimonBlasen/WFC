@@ -13,7 +13,18 @@ namespace OverlapWFC
 
         private int[,] pattern = null;
 
-        private List<PatternNeighbour> neighbours = new List<PatternNeighbour>();
+        private ulong[] bitNeighbours_1_1 = new ulong[0];
+        private ulong[] bitNeighbours_0_0 = new ulong[0];
+        private ulong[] bitNeighbours_0_1 = new ulong[0];
+        private ulong[] bitNeighbours_0_2 = new ulong[0];
+        private ulong[] bitNeighbours_1_2 = new ulong[0];
+        private ulong[] bitNeighbours_2_2 = new ulong[0];
+        private ulong[] bitNeighbours_2_1 = new ulong[0];
+        private ulong[] bitNeighbours_2_0 = new ulong[0];
+        private ulong[] bitNeighbours_1_0 = new ulong[0];
+
+
+        //private List<PatternNeighbour> neighbours = new List<PatternNeighbour>();
 
         public Pattern(int index, int size)
         {
@@ -67,32 +78,108 @@ namespace OverlapWFC
             }
         }
 
-        public int NeighboursAmount
+        public void SetMaxNeighboursAmount(int amount)
         {
-            get
+            bitNeighbours_0_0 = new ulong[((amount - 1) / 64) + 1];
+            for (int i = 0; i < bitNeighbours_0_0.Length; i++)
             {
-                return neighbours.Count;
+                bitNeighbours_0_0[i] = 0x0;
+            }
+            bitNeighbours_0_1 = new ulong[((amount - 1) / 64) + 1];
+            for (int i = 0; i < bitNeighbours_0_1.Length; i++)
+            {
+                bitNeighbours_0_1[i] = 0x0;
+            }
+            bitNeighbours_0_2 = new ulong[((amount - 1) / 64) + 1];
+            for (int i = 0; i < bitNeighbours_0_2.Length; i++)
+            {
+                bitNeighbours_0_2[i] = 0x0;
+            }
+            bitNeighbours_1_0 = new ulong[((amount - 1) / 64) + 1];
+            for (int i = 0; i < bitNeighbours_1_0.Length; i++)
+            {
+                bitNeighbours_1_0[i] = 0x0;
+            }
+            bitNeighbours_1_1 = new ulong[((amount - 1) / 64) + 1];
+            for (int i = 0; i < bitNeighbours_1_1.Length; i++)
+            {
+                bitNeighbours_1_1[i] = 0x0;
+            }
+            bitNeighbours_1_2 = new ulong[((amount - 1) / 64) + 1];
+            for (int i = 0; i < bitNeighbours_1_2.Length; i++)
+            {
+                bitNeighbours_1_2[i] = 0x0;
+            }
+            bitNeighbours_2_0 = new ulong[((amount - 1) / 64) + 1];
+            for (int i = 0; i < bitNeighbours_2_0.Length; i++)
+            {
+                bitNeighbours_2_0[i] = 0x0;
+            }
+            bitNeighbours_2_1 = new ulong[((amount - 1) / 64) + 1];
+            for (int i = 0; i < bitNeighbours_2_1.Length; i++)
+            {
+                bitNeighbours_2_1[i] = 0x0;
+            }
+            bitNeighbours_2_2 = new ulong[((amount - 1) / 64) + 1];
+            for (int i = 0; i < bitNeighbours_2_2.Length; i++)
+            {
+                bitNeighbours_2_2[i] = 0x0;
             }
         }
 
-        public bool HasNeighbour(int index, Vector2Int offset)
+        public int NeighboursAmount
         {
-            for (int i = 0; i < neighbours.Count; i++)
-            {
-                if (neighbours[i].NeighbourIndex == index && neighbours[i].Offset == offset)
-                {
-                    return true;
-                }
-            }
+            get; protected set;
+        } = 0;
 
-            return false;
+        public ulong[] NeighboursAt(Vector2Int offset)
+        {
+            if (offset.x == -1 && offset.y == -1)
+                return bitNeighbours_0_0;
+            else if (offset.x == -1 && offset.y == 0)
+                return bitNeighbours_0_1;
+            else if (offset.x == -1 && offset.y == 1)
+                return bitNeighbours_0_2;
+            else if (offset.x == 0 && offset.y == -1)
+                return bitNeighbours_1_0;
+            else if (offset.x == 0 && offset.y == 0)
+                return bitNeighbours_1_1;
+            else if (offset.x == 0 && offset.y == 1)
+                return bitNeighbours_1_2;
+            else if (offset.x == 1 && offset.y == -1)
+                return bitNeighbours_2_0;
+            else if (offset.x == 1 && offset.y == 0)
+                return bitNeighbours_2_1;
+            else if (offset.x == 1 && offset.y == 1)
+                return bitNeighbours_2_2;
+            else
+                return null;
         }
 
         public void AddNeighbour(int index, Vector2Int offset)
         {
-            PatternNeighbour neighbour = new PatternNeighbour(index, offset);
+            NeighboursAmount++;
+            int arr = index / 64;
+            int bit = index - arr * 64;
 
-            neighbours.Add(neighbour);
+            if (offset.x == -1 && offset.y == -1)
+                bitNeighbours_0_0[arr] |= (0x1UL << bit);
+            else if (offset.x == -1 && offset.y == 0)
+                bitNeighbours_0_1[arr] |= (0x1UL << bit);
+            else if (offset.x == -1 && offset.y == 1)
+                bitNeighbours_0_2[arr] |= (0x1UL << bit);
+            else if (offset.x == 0 && offset.y == -1)
+                bitNeighbours_1_0[arr] |= (0x1UL << bit);
+            else if (offset.x == 0 && offset.y == 0)
+                bitNeighbours_1_1[arr] |= (0x1UL << bit);
+            else if (offset.x == 0 && offset.y == 1)
+                bitNeighbours_1_2[arr] |= (0x1UL << bit);
+            else if (offset.x == 1 && offset.y == -1)
+                bitNeighbours_2_0[arr] |= (0x1UL << bit);
+            else if (offset.x == 1 && offset.y == 0)
+                bitNeighbours_2_1[arr] |= (0x1UL << bit);
+            else if (offset.x == 1 && offset.y == 1)
+                bitNeighbours_2_2[arr] |= (0x1UL << bit);
         }
 
 

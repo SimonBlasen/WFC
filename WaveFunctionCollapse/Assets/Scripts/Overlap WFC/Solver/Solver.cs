@@ -64,31 +64,71 @@ namespace OverlapWFC
                     //for (int offsetY = -(patternManager.PatternSize - 1); offsetY < patternManager.PatternSize; offsetY++)
                     for (int offsetY = -1; offsetY < 2; offsetY++)
                     {
-                        List<int> possiblePatterns = new List<int>();
-                        List<int> domainsAtOffset = new List<int>();
+                        //List<int> possiblePatterns = new List<int>();
+                        //List<int> domainsAtOffset = new List<int>();
 
                         int ofPosX = x + offsetX;
                         int ofPosY = y + offsetY;
 
+
                         if (ofPosX >= 0 && ofPosX < slots.GetLength(0)
                             && ofPosY >= 0 && ofPosY < slots.GetLength(1))
                         {
-                            domainsAtOffset.AddRange(slots[ofPosX, ofPosY].Domain);
+                            ulong[] domainsAtOffset = slots[ofPosX, ofPosY].Domain;
+                            ulong[] domainsAtOffsetOld = new ulong[domainsAtOffset.Length];
+                            ulong[] possibleNeighbours = new ulong[domainsAtOffset.Length];
+                            for (int arr = 0; arr < possibleNeighbours.Length; arr++)
+                            {
+                                possibleNeighbours[arr] = 0x0UL;
+                                domainsAtOffsetOld[arr] = domainsAtOffset[arr];
+                            }
+                            //domainsAtOffset.AddRange(slots[ofPosX, ofPosY].Domain);
 
                             for (int i = 0; i < slots[x, y].DomainSize; i++)
                             {
                                 Pattern patternHere = patternManager.GetPattern(slots[x, y].GetDomainAt(i));
 
-                                for (int j = 0; j < domainsAtOffset.Count; j++)
+                                ulong[] neighbours = patternHere.NeighboursAt(new Vector2Int(offsetX, offsetY));
+
+                                for (int arr = 0; arr < neighbours.Length; arr++)
+                                {
+                                    possibleNeighbours[arr] |= neighbours[arr];
+                                    //domainsAtOffset[arr] &= neighbours[arr];
+                                }
+
+                                /*for (int j = 0; j < domainsAtOffset.Count; j++)
                                 {
                                     if (patternHere.HasNeighbour(domainsAtOffset[j], new Vector2Int(offsetX, offsetY)))
                                     {
                                         possiblePatterns.Add(domainsAtOffset[j]);
                                     }
+                                }*/
+                            }
+
+                            bool changed = false;
+                            for (int arr = 0; arr < possibleNeighbours.Length; arr++)
+                            {
+                                //possibleNeighbours[arr] |= neighbours[arr];
+                                domainsAtOffset[arr] &= possibleNeighbours[arr];
+                                if (domainsAtOffset[arr] != domainsAtOffsetOld[arr])
+                                {
+                                    changed = true;
                                 }
                             }
 
 
+                            if (changed)
+                            {
+                                int prevDomSize = slots[ofPosX, ofPosY].DomainSize;
+                                slots[ofPosX, ofPosY].RecalculateDomainSize();
+
+                                if (prevDomSize > slots[ofPosX, ofPosY].DomainSize)
+                                {
+                                    stack.Add(new Vector2Int(ofPosX, ofPosY));
+                                }
+                            }
+
+                            /*
                             // Reduce domains
                             for (int i = 0; i < possiblePatterns.Count; i++)
                             {
@@ -104,7 +144,7 @@ namespace OverlapWFC
                             {
                                 didSthChange = true;
                                 slots[ofPosX, ofPosY].RemoveDomain(domainsAtOffset[i]);
-                            }
+                            }*/
                         }
                     }
                 }

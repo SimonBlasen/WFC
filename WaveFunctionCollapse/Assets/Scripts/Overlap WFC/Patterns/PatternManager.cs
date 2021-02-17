@@ -130,6 +130,8 @@ namespace OverlapWFC
 
             for (int i = 0; i < manager.patterns.Count; i++)
             {
+                manager.patterns[i].SetMaxNeighboursAmount(manager.patterns.Count);
+
                 for (int j = 0; j < manager.patterns.Count; j++)
                 {
                     //for (int oX = -(patternSize - 1); oX < patternSize; oX++)
