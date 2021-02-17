@@ -58,9 +58,11 @@ namespace OverlapWFC
 
                 stack.RemoveAt(0);
 
-                for (int offsetX = -(patternManager.PatternSize - 1); offsetX < patternManager.PatternSize; offsetX++)
+                //for (int offsetX = -(patternManager.PatternSize - 1); offsetX < patternManager.PatternSize; offsetX++)
+                for (int offsetX = -1; offsetX < 2; offsetX++)
                 {
-                    for (int offsetY = -(patternManager.PatternSize - 1); offsetY < patternManager.PatternSize; offsetY++)
+                    //for (int offsetY = -(patternManager.PatternSize - 1); offsetY < patternManager.PatternSize; offsetY++)
+                    for (int offsetY = -1; offsetY < 2; offsetY++)
                     {
                         List<int> possiblePatterns = new List<int>();
                         List<int> domainsAtOffset = new List<int>();

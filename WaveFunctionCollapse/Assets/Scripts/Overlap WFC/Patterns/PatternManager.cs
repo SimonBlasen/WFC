@@ -132,9 +132,11 @@ namespace OverlapWFC
             {
                 for (int j = 0; j < manager.patterns.Count; j++)
                 {
-                    for (int oX = -(patternSize - 1); oX < patternSize; oX++)
+                    //for (int oX = -(patternSize - 1); oX < patternSize; oX++)
+                    for (int oX = -1; oX < 2; oX++)
                     {
-                        for (int oY = -(patternSize - 1); oY < patternSize; oY++)
+                        //for (int oY = -(patternSize - 1); oY < patternSize; oY++)
+                        for (int oY = -1; oY < 2; oY++)
                         {
                             Vector2Int offset = new Vector2Int(oX, oY);
 
