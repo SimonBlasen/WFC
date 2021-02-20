@@ -95,6 +95,7 @@ public class OutputGenerator : MonoBehaviour
                     instOutput.transform.localPosition = new Vector3(x, y, 0f);
 
                     outputGOs[x, y] = instOutput;
+                    instOutput.transform.Rotate(0f, 180f, 0f);
                 }
             }
         }
