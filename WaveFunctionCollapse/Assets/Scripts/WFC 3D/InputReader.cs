@@ -48,7 +48,12 @@ namespace WFC3D
 
         private void calcInput()
         {
+            InputElement[] inputElements = contentTransform.GetComponentsInChildren<InputElement>();
 
+            for (int i = 0; i < inputElements.Length; i++)
+            {
+
+            }
         }
     }
 
