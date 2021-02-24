@@ -8,7 +8,8 @@ namespace WFC3D
     [ExecuteInEditMode]
     public class InputElement : MonoBehaviour
     {
-        private const float drawLinesDistance = 10f;
+        [SerializeField]
+        private bool onlyRotateY = false;
 
         [SerializeField]
         private string conn_down = "";
