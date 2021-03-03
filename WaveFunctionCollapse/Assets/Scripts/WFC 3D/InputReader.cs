@@ -9,6 +9,7 @@ namespace WFC3D
         NO_PADDING, REPEAT, CLAMP,
     }
 
+    [ExecuteInEditMode]
     public class InputReader : MonoBehaviour
     {
         [SerializeField]
@@ -35,6 +36,8 @@ namespace WFC3D
 
         private int[,,] inputValues = null;
 
+        private PatternManager patternManager;
+
         void Start()
         {
 
@@ -42,7 +45,12 @@ namespace WFC3D
 
         void Update()
         {
+            if (calculateInput)
+            {
+                calculateInput = false;
 
+                calcInput();
+            }
         }
 
 
@@ -50,10 +58,7 @@ namespace WFC3D
         {
             InputElement[] inputElements = contentTransform.GetComponentsInChildren<InputElement>();
 
-            for (int i = 0; i < inputElements.Length; i++)
-            {
-
-            }
+            patternManager = PatternManager.CreateFromInput(inputElements, inputGridSize);
         }
     }
 

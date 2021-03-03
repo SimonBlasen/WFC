@@ -10,20 +10,22 @@ namespace WFC3D
 
         private List<PatternLink> patternLinks = new List<PatternLink>();
 
-        public PatternManager()
+        public PatternManager(Vector3 gridSize)
         {
-            meshAnalyzer = new MeshAnalyzer();
+            meshAnalyzer = new MeshAnalyzer(gridSize);
         }
 
 
-        public static PatternManager CreateFromInput(InputElement[] inputElements)
+        public static PatternManager CreateFromInput(InputElement[] inputElements, Vector3 gridSize)
         {
-            PatternManager pm = new PatternManager();
+            PatternManager pm = new PatternManager(gridSize);
 
             for (int i = 0; i < inputElements.Length; i++)
             {
-
+                pm.meshAnalyzer.AnalyzeFace(inputElements[i].gameObject);
             }
+
+            return pm;
         }
     }
 
