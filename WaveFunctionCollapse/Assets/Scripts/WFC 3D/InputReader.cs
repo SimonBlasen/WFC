@@ -38,6 +38,14 @@ namespace WFC3D
 
         private PatternManager patternManager;
 
+        public Vector3 InputGridSize
+        {
+            get
+            {
+                return inputGridSize;
+            }
+        }
+
         void Start()
         {
 
