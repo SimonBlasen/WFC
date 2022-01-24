@@ -13,18 +13,6 @@ namespace WFC3D
         [SerializeField]
         private Vector3Int objectSize = new Vector3Int(1, 1, 1);
 
-        [SerializeField]
-        private string conn_down = "";
-        [SerializeField]
-        private string conn_up = "";
-        [SerializeField]
-        private string conn_x_Neg = "";
-        [SerializeField]
-        private string conn_x_Pos = "";
-        [SerializeField]
-        private string conn_z_Neg = "";
-        [SerializeField]
-        private string conn_z_Pos = "";
 
         private Vector3 oldPos = Vector3.zero;
 
@@ -34,6 +22,20 @@ namespace WFC3D
         private Vector3Int oldObjectSize = Vector3Int.zero;
 
         private Transform[] instConnectorTransforms = new Transform[0];
+
+        public Transform[] generatedPrototypes = new Transform[0];
+
+
+        public AnalyzedMesh AnalyzedMesh
+        {
+            get; set;
+        } = null;
+
+        public GameObject ResourcesPrefab
+        {
+            get; set;
+        } = null;
+
 
         // Start is called before the first frame update
         void Start()
@@ -66,12 +68,12 @@ namespace WFC3D
                         {
                             if (x == 0 || y == 0 || z == 0 || x == objectSize.x - 1 || y == objectSize.y - 1 || z == objectSize.z - 1)
                             {
-                                GameObject newGo = new GameObject("Connector");
-                                newGo.transform.parent = transform;
-                                newGo.AddComponent<ElementConnector>();
+                                //GameObject newGo = new GameObject("Connector");
+                                //newGo.transform.parent = transform;
+                                //newGo.AddComponent<ElementConnector>();
 
                                 // Add connectors on the sides
-                                newGo.transform.localPosition = inputReader.InputGridSize * 0.5f + new Vector3()
+                                //newGo.transform.localPosition = inputReader.InputGridSize * 0.5f + new Vector3()
                             }
 
                         }
@@ -111,7 +113,7 @@ namespace WFC3D
         }
 
 
-        private void OnDrawGizmos()
+        /*private void OnDrawGizmos()
         {
             if (inputReader == null)
             {
@@ -125,7 +127,7 @@ namespace WFC3D
 
             Gizmos.color = new Color(0f, 1f, 0f, 0.3f);
             Gizmos.DrawCube(transform.position + transform.rotation * midPoint, midPoint * 2f);
-        }
+        }*/
     }
 
 }

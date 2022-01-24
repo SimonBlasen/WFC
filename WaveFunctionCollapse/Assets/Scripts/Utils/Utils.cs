@@ -2,17 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Utils : MonoBehaviour
+public class Utils
 {
-    // Start is called before the first frame update
-    void Start()
+    public static bool AreNormalsEqual(Vector3Int normalA, Vector3Int normalB)
     {
-        
-    }
+        float angle = Vector3.Angle(normalA, normalB);
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+        return angle < 90f;
     }
 }

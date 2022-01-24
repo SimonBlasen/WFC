@@ -22,7 +22,7 @@ namespace WFC3D
 
             for (int i = 0; i < inputElements.Length; i++)
             {
-                pm.meshAnalyzer.AnalyzeFace(inputElements[i].gameObject);
+                //pm.meshAnalyzer.AnalyzeFace(inputElements[i].gameObject);
             }
 
             return pm;
