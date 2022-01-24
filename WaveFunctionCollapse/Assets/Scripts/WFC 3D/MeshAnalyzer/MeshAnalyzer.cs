@@ -22,8 +22,15 @@ namespace WFC3D
         {
             this.gridSize = gridSize;
 
-            GameObject pivotObject = new GameObject("Pivot Transform");
-            pivot = pivotObject.transform;
+            if (GameObject.Find("Pivot Transform") == null)
+            {
+                GameObject pivotObject = new GameObject("Pivot Transform");
+                pivot = pivotObject.transform;
+            }
+            else
+            {
+                pivot = GameObject.Find("Pivot Transform").transform;
+            }
         }
 
         public AnalyzedMesh AnalyzeMesh(GameObject objectWithMesh, bool visualize = false)

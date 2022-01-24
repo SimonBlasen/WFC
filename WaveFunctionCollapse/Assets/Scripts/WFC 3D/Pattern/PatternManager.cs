@@ -18,6 +18,8 @@ namespace WFC3D
 
         public static PatternManager CreateFromInput(InputElement[] inputElements, Vector3 gridSize)
         {
+            Debug.Log("Analysing [" + inputElements.Length.ToString() + "] Input Elements");
+
             PatternManager pm = new PatternManager(gridSize);
 
             for (int i = 0; i < inputElements.Length; i++)

@@ -123,14 +123,10 @@ namespace WFC3D
                 meshesToCheckAgainst.Add(analyzedMesh);
 
 
-                // TODO Make prototypes
-
                 for (int j = 1; j < 8; j++)
                 {
                     bool isMirrored = j >= 4;
                     int rotationIndex = j % 4;
-
-                    //AnalyzedMesh rotMirMesh = AnalyzedMesh.RotatedMirroredMesh(analyzedMesh, rotationIndex, isMirrored);
 
 
                     InputElement instInputElement = createInputElement(inputElements[i].ResourcesPrefab);
